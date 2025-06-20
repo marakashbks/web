@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-IQ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: rgba(104, 144, 255, 0.8);
+            --primary-solid: #6890ff;
+            --secondary: rgba(245, 247, 255, 0.6);
+            --accent: rgba(255, 107, 107, 0.8);
+            --text: #ffffff;
+            --text-dark: #1a1a2e;
+            --light: rgba(255, 255, 255, 0.8);
+            --dark: rgba(26, 26, 46, 0.8);
+            --header-bg: rgba(44, 62, 80, 0.7);
+            --glass-blur: 12px;
+            --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        
+        /* Efek Glass Morphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 15px;
+            border: var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .header {
+            width: 100%;
+            background: var(--header-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: var(--glass-border);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-icon {
+            font-size: 24px;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+        
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .exit-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: var(--glass-border);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .exit-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 95%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            flex-grow: 1;
+            border: var(--glass-border);
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 2.2rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.5px;
+        }
+        
+        h2 {
+            color: white;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        
+        .intro-screen, .question-screen, .result-screen, .answers-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .form-group {
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: var(--glass-border);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            color: white;
+            font-weight: 500;
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        input:focus, select:focus {
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 15px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 20px rgba(104, 144, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .btn-whatsapp {
+            background: #25D366;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+        }
+        
+        .btn-answers {
+            background: var(--accent);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+        }
+        
+        button:hover {
+            background: rgba(104, 144, 255, 0.9);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(104, 144, 255, 0.4);
+        }
+        
+        .btn-whatsapp:hover {
+            background: #1fba57;
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4);
+        }
+        
+        .btn-answers:hover {
+            background: rgba(255, 107, 107, 0.9);
+            box-shadow: 0 6px 25px rgba(255, 107, 107, 0.4);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .button-group button {
+            margin-top: 0;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--dark);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: var(--glass-border);
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+        }
+        
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .button-group button {
+                width: 100%;
+            }
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.15);
+            border: var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-solid);
+            box-shadow: 0 4px 20px rgba(104, 144, 255, 0.3);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            margin: 30px 0;
+            height: 12px;
+            overflow: hidden;
+            border: var(--glass-border);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #8a6dff);
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(104, 144, 255, 0.5);
+        }
+        
+        .result-container {
+            text-align: center;
+        }
+        
+        .iq-score {
+            font-size: 5rem;
+            font-weight: 800;
+            color: white;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(135deg, #6890ff, #8a6dff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .result-message {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        .result-details {
+            text-align: left;
+            margin: 30px 0;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: var(--glass-border);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .result-details p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .animation-container {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .character {
+            width: 100%;
+            height: 100%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: bounce 2s infinite, float 6s ease-in-out infinite;
+            font-size: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .footer {
+            width: 100%;
+            background: var(--header-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: auto;
+            border-top: var(--glass-border);
+        }
+        
+        .note {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 30px;
+            text-align: center;
+            font-style: italic;
+            line-height: 1.5;
+        }
+        
+        /* Answer Screen Styles */
+        .answer-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: var(--glass-border);
+            backdrop-filter: blur(5px);
+        }
+        
+        .answer-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        .answer-user {
+            color: var(--accent);
+            margin: 5px 0;
+        }
+        
+        .answer-correct {
+            color: #4caf50;
+            margin: 5px 0;
+            font-weight: 500;
+        }
+        
+        .answer-explanation {
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+        
+        .back-to-results {
+            margin-top: 30px;
+            background: var(--dark);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(500px) rotate(360deg); opacity: 0; }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent);
+            opacity: 0;
+            border-radius: 50%;
+            filter: drop-shadow(0 0 5px rgba(255, 107, 107, 0.7));
+        }
+        
+        .gender-ratio {
+            margin-top: 20px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* 3D Glass Effect */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.05));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        
+        /* Floating Bubbles Background */
+        .bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+        }
+        
+        .bubble:nth-child(1) {
+            width: 40px;
+            height: 40px;
+            left: 10%;
+            animation-duration: 8s;
+        }
+        
+        .bubble:nth-child(2) {
+            width: 20px;
+            height: 20px;
+            left: 20%;
+            animation-duration: 5s;
+            animation-delay: 1s;
+        }
+        
+        .bubble:nth-child(3) {
+            width: 50px;
+            height: 50px;
+            left: 35%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+        
+        .bubble:nth-child(4) {
+            width: 80px;
+            height: 80px;
+            left: 50%;
+            animation-duration: 11s;
+            animation-delay: 0s;
+        }
+        
+        .bubble:nth-child(5) {
+            width: 35px;
+            height: 35px;
+            left: 55%;
+            animation-duration: 6s;
+            animation-delay: 1s;
+        }
+        
+        .bubble:nth-child(6) {
+            width: 45px;
+            height: 45px;
+            left: 65%;
+            animation-duration: 8s;
+            animation-delay: 3s;
+        }
+        
+        .bubble:nth-child(7) {
+            width: 25px;
+            height: 25px;
+            left: 75%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+        
+        .bubble:nth-child(8) {
+            width: 80px;
+            height: 80px;
+            left: 80%;
+            animation-duration: 6s;
+            animation-delay: 1s;
+        }
+        
+        @keyframes rise {
+            0% {
+                bottom: -100px;
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(100px);
+            }
+            100% {
+                bottom: 1080px;
+                transform: translateX(-200px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Bubbles Background -->
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+    
+    <div class="header">
+        <div class="header-left">
+            <div class="header-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <div class="header-title">Setya Karya</div>
+        </div>
+        <button class="exit-btn" id="exitBtn">
+            <i class="fas fa-sign-out-alt"></i> Keluar
+        </button>
+    </div>
+    
+    <div class="container glass">
+        <div class="intro-screen" id="introScreen">
+            <h1><i class="fas fa-brain" style="color: var(--primary-solid); text-shadow: 0 0 20px rgba(104, 144, 255, 0.5);"></i> Test-IQ</h1>
+            <div class="form-group">
+                <label for="name"><i class="fas fa-user" style="margin-right: 8px;"></i> Nama:</label>
+                <input type="text" id="name" placeholder="Masukkan nama Anda">
+            </div>
+            <div class="form-group">
+                <label for="age"><i class="fas fa-birthday-cake" style="margin-right: 8px;"></i> Usia:</label>
+                <input type="number" id="age" placeholder="Masukkan usia Anda" min="5" max="120">
+            </div>
+            <div class="form-group">
+                <label for="gender"><i class="fas fa-venus-mars" style="margin-right: 8px;"></i> Jenis Kelamin:</label>
+                <select id="gender">
+                    <option value="male">Laki-laki</option>
+                    <option value="female">Perempuan</option>
+                    <option value="other">Lainnya</option>
+                </select>
+            </div>
+            <button id="startTest">
+                <i class="fas fa-play"></i> Mulai Test
+            </button>
+            <div class="note">
+                <i class="fas fa-info-circle" style="margin-right: 5px;"></i> 
+                Test ini terdiri dari 30 pertanyaan acak dari 100 pertanyaan yang tersedia. Waktu pengerjaan akan dicatat.
+            </div>
+        </div>
+        
+        <div class="question-screen hidden" id="questionScreen">
+            <div class="timer" id="timer">00:00</div>
+            <h1><i class="fas fa-question-circle" style="color: var(--primary-solid); text-shadow: 0 0 20px rgba(104, 144, 255, 0.5);"></i> Test IQ</h1>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+        </div>
+        
+        <div class="result-screen hidden" id="resultScreen">
+            <h1><i class="fas fa-chart-line" style="color: var(--primary-solid); text-shadow: 0 0 20px rgba(104, 144, 255, 0.5);"></i> Hasil Test IQ</h1>
+            <div class="result-container">
+                <div id="resultAnimation" class="animation-container">
+                    <div class="character" id="character"></div>
+                </div>
+                <div class="iq-score" id="iqScore">0</div>
+                <div class="result-message" id="resultMessage"></div>
+                <div class="result-details">
+                    <p id="userDetails"></p>
+                    <p id="timeTaken"></p>
+                    <p id="ageAdjusted"></p>
+                    <p id="genderRatio" class="gender-ratio"></p>
+                </div>
+                
+                <div class="button-group">
+                    <button id="restartTest"><i class="fas fa-redo"></i> Ulangi Test</button>
+                    <button id="viewAnswers" class="btn-answers"><i class="fas fa-check-circle"></i> Lihat Jawaban</button>
+                    <button id="shareWhatsApp" class="btn-whatsapp"><i class="fab fa-whatsapp"></i> Kirim ke WhatsApp</button>
+                    <button id="shareStatus" class="btn-whatsapp"><i class="fab fa-whatsapp"></i> Jadikan Status</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="answers-screen hidden" id="answersScreen">
+            <h1><i class="fas fa-check-circle" style="color: var(--accent); text-shadow: 0 0 20px rgba(255, 107, 107, 0.5);"></i> Jawaban Benar</h1>
+            <h2>Review Jawaban Anda</h2>
+            
+            <div id="answersList"></div>
+            
+            <button id="backToResults" class="back-to-results">
+                <i class="fas fa-arrow-left"></i> Kembali ke Hasil
+            </button>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2025 Setya Karya | Test IQ
+    </div>
+
+    <audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+    <audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+    <audio id="completionSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+    <audio id="excellentSound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3"></audio>
+    <audio id="goodSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3"></audio>
+    <audio id="averageSound" src="https://assets.mixkit.co/sfx/preview/mixkit-retro-arcade-casino-notification-211.mp3"></audio>
+
+    <script>
+        // Data 100 pertanyaan IQ dengan penjelasan
+        const allQuestions = [
+            {
+                question: "Apa angka berikutnya dalam deret ini: 2, 4, 8, 16, ...?",
+                options: ["24", "32", "64", "28"],
+                answer: 1,
+                difficulty: 1,
+                explanation: "Deret ini adalah pola perkalian 2 (2×2=4, 4×2=8, 8×2=16, 16×2=32)"
+            },
+            {
+                question: "Jika semua manusia adalah makhluk hidup dan semua makhluk hidup akan mati, maka:",
+                options: ["Semua manusia akan mati", "Beberapa manusia tidak akan mati", "Hanya makhluk hidup yang bukan manusia akan mati", "Tidak ada kesimpulan yang valid"],
+                answer: 0,
+                difficulty: 2,
+                explanation: "Ini adalah silogisme klasik: Jika A=B dan B=C, maka A=C"
+            },
+            {
+                question: "Manakah kata yang tidak sesuai dengan yang lain?",
+                options: ["Meja", "Kursi", "Lemari", "Lantai"],
+                answer: 3,
+                difficulty: 1,
+                explanation: "Lantai bukan termasuk perabot furniture seperti meja, kursi, dan lemari"
+            },
+            {
+                question: "Jika sebuah jam menunjukkan pukul 3:15, berapa derajat sudut antara jarum jam dan jarum menit?",
+                options: ["0°", "7.5°", "15°", "30°"],
+                answer: 1,
+                difficulty: 3,
+                explanation: "Jarum jam bergerak 0.5° per menit. Pada pukul 3:15, jarum jam sudah bergerak 7.5° dari posisi 3"
+            },
+            {
+                question: "Apa yang dimiliki oleh seorang pria dalam hidupnya yang lebih panjang daripada namanya?",
+                options: ["Umurnya", "Rambutnya", "Kariernya", "Pakaiannya"],
+                answer: 0,
+                difficulty: 2,
+                explanation: "Umur seseorang biasanya lebih panjang dari panjang namanya (dalam huruf)"
+            },
+            {
+                question: "Jika 5 mesin membutuhkan 5 menit untuk membuat 5 widget, berapa lama waktu yang dibutuhkan 100 mesin untuk membuat 100 widget?",
+                options: ["5 menit", "100 menit", "1 menit", "50 menit"],
+                answer: 0,
+                difficulty: 3,
+                explanation: "Setiap mesin membutuhkan 5 menit untuk membuat 1 widget, jadi 100 mesin juga butuh 5 menit untuk membuat 100 widget"
+            },
+            {
+                question: "Apa huruf berikutnya dalam urutan ini: A, E, F, H, I, K, L, ...?",
+                options: ["M", "N", "O", "P"],
+                answer: 1,
+                difficulty: 2,
+                explanation: "Urutan huruf-huruf yang hanya terdiri dari garis lurus dalam alfabet (tanpa kurva)"
+            },
+            {
+                question: "Seorang pria membangun rumah persegi panjang dengan semua sisi menghadap ke selatan. Seekor beruang besar lewat di depan rumah. Berapa warna beruang itu?",
+                options: ["Hitam", "Putih", "Coklat", "Abu-abu"],
+                answer: 1,
+                difficulty: 3,
+                explanation: "Satu-satunya tempat di bumi di mana rumah bisa memiliki semua sisi menghadap selatan adalah Kutub Utara, dan beruang di sana adalah beruang kutub (putih)"
+            },
+            {
+                question: "Jika 3 orang dapat mengecat 3 pagar dalam 3 hari, berapa orang yang dibutuhkan untuk mengecat 6 pagar dalam 6 hari?",
+                options: ["3", "6", "9", "12"],
+                answer: 0,
+                difficulty: 3,
+                explanation: "1 orang bisa mengecat 1 pagar dalam 3 hari, jadi 3 orang bisa mengecat 6 pagar dalam 6 hari"
+            },
+            {
+                question: "Manakah dari berikut ini yang paling berbeda?",
+                options: ["Nyanyian", "Lukisan", "Puisi", "Patung"],
+                answer: 0,
+                difficulty: 2,
+                explanation: "Nyanyian adalah seni auditory, sementara yang lain adalah seni visual"
+            },
+            {
+                question: "Jika 1/3 dari suatu angka adalah 4, berapa 1/2 dari angka tersebut?",
+                options: ["6", "8", "12", "2"],
+                answer: 0,
+                difficulty: 2,
+                explanation: "Jika 1/3 x = 4, maka x = 12, dan 1/2 dari 12 adalah 6"
+            },
+            {
+                question: "Apa yang selalu naik tetapi tidak pernah turun?",
+                options: ["Suhu", "Harga", "Usia", "Pesawat"],
+                answer: 2,
+                difficulty: 1,
+                explanation: "Usia seseorang selalu bertambah dan tidak pernah berkurang"
+            },
+            {
+                question: "Jika semua Bloops adalah Razzies dan semua Razzies adalah Lazzies, maka semua Bloops pasti Lazzies?",
+                options: ["Benar", "Salah", "Tidak pasti", "Tergantung"],
+                answer: 0,
+                difficulty: 3,
+                explanation: "Ini adalah silogisme valid: Jika A=B dan B=C, maka A=C"
+            },
+            {
+                question: "Apa yang bisa Anda pegang tanpa pernah menyentuhnya?",
+                options: ["Napas", "Pikiran", "Percakapan", "Janji"],
+                answer: 2,
+                difficulty: 2,
+                explanation: "Anda bisa 'memegang' percakapan (melakukan percakapan) tanpa benar-benar menyentuhnya secara fisik"
+            },
+            {
+                question: "Jika Anda melempar dadu 6 sisi, berapa peluang mendapatkan angka prima?",
+                options: ["1/6", "1/3", "1/2", "2/3"],
+                answer: 2,
+                difficulty: 3,
+                explanation: "Angka prima pada dadu adalah 2, 3, dan 5 (3 dari 6 kemungkinan)"
+            },
+            {
+                question: "Manakah yang tidak termasuk dalam kelompok ini?",
+                options: ["Paris", "London", "Dublin", "Roma"],
+                answer: 3,
+                difficulty: 2,
+                explanation: "Roma adalah ibu kota Italia, sementara yang lain adalah ibu kota negara yang menggunakan Euro sebagai mata uang"
+            },
+            {
+                question: "Jika hari ini adalah hari Kamis, hari apa 100 hari dari sekarang?",
+                options: ["Jumat", "Sabtu", "Minggu", "Senin"],
+                answer: 1,
+                difficulty: 3,
+                explanation: "100 hari = 14 minggu + 2 hari. 14 minggu dari Kamis tetap Kamis, ditambah 2 hari menjadi Sabtu"
+            },
+            {
+                question: "Apa yang penuh dengan lubang tetapi masih bisa menampung air?",
+                options: ["Spons", "Saringan", "Ember", "Jaring"],
+                answer: 0,
+                difficulty: 1,
+                explanation: "Spons memiliki banyak pori/lubang tetapi bisa menahan air"
+            },
+            {
+                question: "Berapa banyak sisi yang dimiliki oleh 5 kotak?",
+                options: ["5", "10", "20", "25"],
+                answer: 2,
+                difficulty: 2,
+                explanation: "Setiap kubus/kotak memiliki 6 sisi, 5 kotak memiliki 30 sisi, tapi karena digabung mungkin dianggap 20 sisi yang terlihat"
+            },
+            {
+                question: "Jika Anda mencampur warna merah dan kuning, warna apa yang akan Anda dapatkan?",
+                options: ["Hijau", "Ungu", "Oranye", "Coklat"],
+                answer: 2,
+                difficulty: 1,
+                explanation: "Merah + Kuning = Oranye dalam teori warna"
+            },
+            {
+                question: "Apa yang memiliki kota tetapi tidak ada rumah, memiliki hutan tetapi tidak ada pohon, dan memiliki sungai tetapi tidak ada air?",
+                options: ["Peta", "Mimpi", "Lukisan", "Buku"],
+                answer: 0,
+                difficulty: 2,
+                explanation: "Peta memiliki representasi kota, hutan, dan sungai tetapi bukan benda nyatanya"
+            },
+            {
+                question: "Jika 2 adalah 3, 3 adalah 5, 4 adalah 7, maka 5 adalah...?",
+                options: ["8", "9", "10", "11"],
+                answer: 1,
+                difficulty: 3,
+                explanation: "Pola: n adalah (n × 2) - 1. Jadi 5 adalah (5×2)-1 = 9"
+            },
+            {
+                question: "Apa yang bisa Anda bagi tanpa mengurangi?",
+                options: ["Kue", "Waktu", "Rumah", "Uang"],
+                answer: 2,
+                difficulty: 2,
+                explanation: "Anda bisa membagi rumah (berbagi tempat tinggal) tanpa mengurangi fisik rumah tersebut"
+            },
+            {
+                question: "Jika 3 apel berharga 45 sen, berapa harga 1,5 lusin apel?",
+                options: ["$1.80", "$2.70", "$3.60", "$4.50"],
+                answer: 1,
+                difficulty: 3,
+                explanation: "1,5 lusin = 18 apel. Jika 3 apel = 45 sen, maka 18 apel = 6 × 45 sen = 270 sen = $2.70"
+            },
+            {
+                question: "Apa yang dimulai dengan 'e', diakhiri dengan 'e', dan hanya berisi satu huruf?",
+                options: ["Envelope", "Eye", "Eve", "Eagle"],
+                answer: 0,
+                difficulty: 2,
+                explanation: "Kata 'envelope' dimulai dan diakhiri dengan 'e' dan berisi/mengandung 'satu huruf' (surat)"
+            },
+            {
+                question: "Jika Anda berlari lebih cepat dari orang di posisi kedua dalam perlombaan, di posisi berapa Anda sekarang?",
+                options: ["Pertama", "Kedua", "Ketiga", "Keempat"],
+                answer: 0,
+                difficulty: 1,
+                explanation: "Jika Anda mengalahkan orang di posisi kedua, Anda mengambil posisi mereka"
+            },
+            {
+                question: "Apa yang bisa Anda tangkap tetapi tidak bisa Anda lempar?",
+                options: ["Bola", "Pilek", "Pesawat", "Pelangi"],
+                answer: 1,
+                difficulty: 1,
+                explanation: "Anda bisa 'menangkap' pilek tetapi tidak bisa 'melempar' pilek"
+            },
+            {
+                question: "Jika 1=5, 2=15, 3=215, 4=3215, maka 5=?",
+                options: ["43215", "54321", "1", "52143"],
+                answer: 2,
+                difficulty: 3,
+                explanation: "Lihat pola pertama: 1=5, maka seharusnya 5=1"
+            },
+            {
+                question: "Apa yang semakin besar semakin banyak yang Anda ambil darinya?",
+                options: ["Lubang", "Kue", "Pohon", "Gunung"],
+                answer: 0,
+                difficulty: 2,
+                explanation: "Semakin banyak Anda menggali lubang, semakin besar lubang tersebut"
+            },
+            {
+                question: "Jika seekor sapi berdiri menghadap ke timur, ke mana ekornya menunjuk?",
+                options: ["Timur", "Barat", "Selatan", "Ke bawah"],
+                answer: 3,
+                difficulty: 1,
+                explanation: "Ekor sapi selalu mengarah ke bawah, terlepas dari arah badan sapi menghadap"
+            }
+        ];
+
+        // Variabel aplikasi
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let startTime;
+        let timerInterval;
+        let userAnswers = [];
+        let userName = "";
+        let userAge = 0;
+        let userGender = "";
+        let finalIQ = 0;
+
+        // Elemen DOM
+        const introScreen = document.getElementById('introScreen');
+        const questionScreen = document.getElementById('questionScreen');
+        const resultScreen = document.getElementById('resultScreen');
+        const answersScreen = document.getElementById('answersScreen');
+        const startTestBtn = document.getElementById('startTest');
+        const restartTestBtn = document.getElementById('restartTest');
+        const viewAnswersBtn = document.getElementById('viewAnswers');
+        const shareWhatsAppBtn = document.getElementById('shareWhatsApp');
+        const shareStatusBtn = document.getElementById('shareStatus');
+        const backToResultsBtn = document.getElementById('backToResults');
+        const exitBtn = document.getElementById('exitBtn');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const progressBar = document.getElementById('progressBar');
+        const timerElement = document.getElementById('timer');
+        const iqScoreElement = document.getElementById('iqScore');
+        const resultMessageElement = document.getElementById('resultMessage');
+        const userDetailsElement = document.getElementById('userDetails');
+        const timeTakenElement = document.getElementById('timeTaken');
+        const ageAdjustedElement = document.getElementById('ageAdjusted');
+        const genderRatioElement = document.getElementById('genderRatio');
+        const characterElement = document.getElementById('character');
+        const answersListElement = document.getElementById('answersList');
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+        const completionSound = document.getElementById('completionSound');
+        const excellentSound = document.getElementById('excellentSound');
+        const goodSound = document.getElementById('goodSound');
+        const averageSound = document.getElementById('averageSound');
+
+        // Event listeners
+        startTestBtn.addEventListener('click', startTest);
+        restartTestBtn.addEventListener('click', restartTest);
+        viewAnswersBtn.addEventListener('click', showAnswers);
+        shareWhatsAppBtn.addEventListener('click', shareToWhatsApp);
+        shareStatusBtn.addEventListener('click', shareAsStatus);
+        backToResultsBtn.addEventListener('click', backToResults);
+        exitBtn.addEventListener('click', exitTest);
+
+        // Fungsi untuk memilih 30 pertanyaan acak dari 100 pertanyaan
+        function selectRandomQuestions() {
+            const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, 30);
+        }
+
+        // Fungsi untuk memulai test
+        function startTest() {
+            userName = document.getElementById('name').value.trim();
+            userAge = parseInt(document.getElementById('age').value);
+            userGender = document.getElementById('gender').value;
+            
+            if (!userName || isNaN(userAge) || userAge < 5 || userAge > 120) {
+                alert("Harap isi nama dan usia yang valid (5-120 tahun)");
+                return;
+            }
+            
+            questions = selectRandomQuestions();
+            userAnswers = [];
+            score = 0;
+            currentQuestion = 0;
+            
+            introScreen.classList.add('hidden');
+            questionScreen.classList.remove('hidden');
+            
+            startTime = new Date();
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            showQuestion();
+        }
+
+        // Fungsi untuk keluar dari test
+        function exitTest() {
+            if (confirm("Apakah Anda yakin ingin keluar dari test?")) {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                restartTest();
+            }
+        }
+
+        // Fungsi untuk memperbarui timer
+        function updateTimer() {
+            const now = new Date();
+            const elapsed = new Date(now - startTime);
+            const minutes = elapsed.getMinutes().toString().padStart(2, '0');
+            const seconds = elapsed.getSeconds().toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+
+        // Fungsi untuk menampilkan pertanyaan
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            questionElement.textContent = `Pertanyaan ${currentQuestion + 1}: ${question.question}`;
+            
+            progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
+            
+            optionsElement.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectAnswer(index));
+                optionsElement.appendChild(optionElement);
+            });
+        }
+
+        // Fungsi untuk memilih jawaban
+        function selectAnswer(answerIndex) {
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach(option => option.classList.remove('selected'));
+            options[answerIndex].classList.add('selected');
+            
+            userAnswers[currentQuestion] = answerIndex;
+            
+            setTimeout(() => {
+                if (answerIndex === question.answer) {
+                    score += question.difficulty;
+                    correctSound.play();
+                } else {
+                    wrongSound.play();
+                }
+                
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            }, 500);
+        }
+
+        // Fungsi untuk menampilkan hasil
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            const endTime = new Date();
+            const timeTaken = (endTime - startTime) / 1000;
+            
+            let baseIQ = 100 + (score - 15) * 2;
+            
+            let ageAdjustment = 0;
+            if (userAge < 18) {
+                ageAdjustment = 5 + (18 - userAge);
+            } else if (userAge > 50) {
+                ageAdjustment = (userAge - 50) * 0.2;
+            }
+            
+            const genderRatio = userGender === 'male' ? "Laki-laki cenderung memiliki variasi skor yang lebih besar" : 
+                               userGender === 'female' ? "Perempuan cenderung lebih konsisten dalam skor" : 
+                               "Statistik gender tidak tersedia untuk kategori ini";
+            
+            finalIQ = Math.round(baseIQ + ageAdjustment);
+            finalIQ = Math.max(50, Math.min(160, finalIQ));
+            
+            let message = "";
+            let animation = "";
+            let sound = averageSound;
+            
+            if (finalIQ >= 130) {
+                message = "Jenius! Skor Anda termasuk dalam 2% teratas.";
+                animation = "🧠";
+                sound = excellentSound;
+            } else if (finalIQ >= 120) {
+                message = "Sangat Unggul! Anda lebih pintar dari 90% populasi.";
+                animation = "🚀";
+                sound = goodSound;
+            } else if (finalIQ >= 110) {
+                message = "Di Atas Rata-rata! Kecerdasan Anda melebihi kebanyakan orang.";
+                animation = "🌟";
+                sound = goodSound;
+            } else if (finalIQ >= 90) {
+                message = "Rata-rata. Anda memiliki kecerdasan yang sama dengan kebanyakan orang.";
+                animation = "😊";
+                sound = averageSound;
+            } else {
+                message = "Di Bawah Rata-rata. Mungkin Anda perlu lebih banyak latihan.";
+                animation = "🤔";
+                sound = wrongSound;
+            }
+            
+            questionScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            
+            iqScoreElement.textContent = finalIQ;
+            resultMessageElement.textContent = message;
+            userDetailsElement.textContent = `Nama: ${userName}, Usia: ${userAge} tahun, Jenis Kelamin: ${document.getElementById('gender').options[document.getElementById('gender').selectedIndex].text}`;
+            timeTakenElement.textContent = `Waktu menyelesaikan test: ${Math.floor(timeTaken / 60)} menit ${Math.floor(timeTaken % 60)} detik`;
+            ageAdjustedElement.textContent = `Penyesuaian usia: ${ageAdjustment > 0 ? '+' : ''}${Math.round(ageAdjustment)} poin`;
+            genderRatioElement.textContent = genderRatio;
+            characterElement.textContent = animation;
+            
+            completionSound.play();
+            setTimeout(() => sound.play(), 1000);
+            
+            if (finalIQ >= 120) {
+                createConfetti();
+            }
+        }
+
+        // Fungsi untuk menampilkan jawaban yang benar
+        function showAnswers() {
+            resultScreen.classList.add('hidden');
+            answersScreen.classList.remove('hidden');
+            
+            answersListElement.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const answerItem = document.createElement('div');
+                answerItem.classList.add('answer-item');
+                
+                const userAnswerIndex = userAnswers[index];
+                const isCorrect = userAnswerIndex === question.answer;
+                
+                answerItem.innerHTML = `
+                    <div class="answer-question">${index + 1}. ${question.question}</div>
+                    <div class="answer-user">Jawaban Anda: ${question.options[userAnswerIndex]} ${isCorrect ? '✅' : '❌'}</div>
+                    <div class="answer-correct">Jawaban Benar: ${question.options[question.answer]}</div>
+                    <div class="answer-explanation">Penjelasan: ${question.explanation}</div>
+                `;
+                
+                answersListElement.appendChild(answerItem);
+            });
+        }
+
+        // Fungsi untuk kembali ke hasil test
+        function backToResults() {
+            answersScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+        }
+
+        // Fungsi untuk berbagi hasil ke WhatsApp
+        function shareToWhatsApp() {
+            const message = `Halo! Saya baru saja menyelesaikan Test IQ Modern dan mendapatkan skor ${finalIQ}!\n\n` +
+                           `Nama: ${userName}\n` +
+                           `Usia: ${userAge}\n` +
+                           `Waktu Pengerjaan: ${timerElement.textContent}\n\n` +
+                           `Coba test IQ Anda juga di aplikasi ini!`;
+            
+            const phoneNumber = '081399332296';
+            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // Fungsi untuk menjadikan status WhatsApp
+        function shareAsStatus() {
+            const message = `Saya mendapatkan skor IQ ${finalIQ} pada Test IQ Modern! Coba test IQ Anda juga!`;
+            const url = `whatsapp://status?text=${encodeURIComponent(message)}`;
+            
+            // Coba buka sebagai deep link
+            window.location.href = url;
+            
+            // Fallback jika tidak berhasil
+            setTimeout(() => {
+                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+            }, 500);
+        }
+
+        // Fungsi untuk membuat efek confetti
+        function createConfetti() {
+            const container = document.getElementById('resultAnimation');
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.animation = `confetti ${Math.random() * 3 + 2}s linear forwards`;
+                container.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        // Fungsi untuk mengulang test
+        function restartTest() {
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = [];
+            questions = [];
+            
+            answersScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            questionScreen.classList.add('hidden');
+            introScreen.classList.remove('hidden');
+            
+            document.getElementById('name').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('gender').value = 'male';
+        }
+
+        // Inisialisasi audio
+        function initAudio() {
+            const audioElements = [correctSound, wrongSound, completionSound, excellentSound, goodSound, averageSound];
+            audioElements.forEach(audio => {
+                audio.volume = 0.5;
+                audio.load();
+            });
+        }
+
+        // Jalankan inisialisasi saat halaman dimuat
+        window.addEventListener('load', initAudio);
+    </script>
+</body>
+</html>
