@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QRIS Mobile App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f7f7f7;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Custom rounded corners like the image */
+    .app-container {
+      max-width: 420px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+      overflow: hidden;
+    }
+
+    /* Background pattern (like watermark) */
+    .pattern {
+      background-image: 
+        linear-gradient(45deg, #e0e0e0 25%, transparent 25%), 
+        linear-gradient(-45deg, #e0e0e0 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #e0e0e0 75%), 
+        linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+      background-size: 28px 28px;
+      background-position: 0 0, 0 14px, 14px -14px, -14px 0px;
+      opacity: 0.1;
+    }
+
+    /* Circle style for icons */
+    .circle-icon {
+      width: 48px; 
+      height: 48px; 
+      background: white; 
+      border-radius: 9999px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header QRIS and GPN logos -->
+    <header class="flex justify-between items-center p-4 border-b border-gray-200">
+      <div class="flex items-center space-x-2">
+        <img src="https://home.oxygen.id/assets/images/info-pembayaran/qris-logo.png" alt="QRIS logo" class="w-20 h-auto" />
+        <div class="text-xs">
+          <div class="mt-1 text-lg font-semibold">QR Code Standar</div>
+          <div class="font-semibold">Pembayaran Nasional</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Merchant Info -->
+    <section class="p-5 text-center">
+      <h1 class="text-xl font-extrabold">WISATA DANAU MARAKASH</h1>
+      <p class="mt-1 text-gray-700 font-medium text-sm">NMID: ID1024334158812</p>
+      <p class="mt-1 text-lg font-semibold">A01</p>
+    </section>
+
+    <!-- QR Code -->
+    <section class="p-5 flex justify-center">
+      <img src="https://raw.githubusercontent.com/marakashbks/web/refs/heads/main/Kode%20QRIS%20WISATA%20DANAU%20MARAKASH%20(1).png" class="shadow-lg rounded-lg"/>
+    </section>
+
+        <!-- Tombol WhatsApp -->
+    <section class="p-4 text-center">
+      <a href="https://raw.githubusercontent.com/marakashbks/web/refs/heads/main/qr.png" target="_blank" class="inline-block bg-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-green-600 transition duration-200">
+        Lihat QR
+      </a>
+    </section>
+            <h2 class="font-semibold text-center">V1.0.2025.05.19</h2>
+    </section>
+
+    <!-- Information below QR -->
+    <section class="p-3 px-5 border-t border-gray-200">
+      <p class="text-xs font-semibold text-gray-800">SATU QRIS UNTUK SEMUA</p>
+      <p class="text-xs text-gray-600">Cek aplikasi penyelenggara di: <a href="http://www.aspi-qris.id" target="_blank" class="text-red-600 underline">www.aspi-qris.id</a></p>
+    </section>
+
+    <!-- Footer info -->
+    <section class="p-4 text-xs text-gray-700 border-t border-gray-200">
+      <p>Dicetak oleh: <span class="font-semibold">93600914</span></p>
+      <p>Versi cetak: <span class="font-semibold">V1.0.2025.05.19</span></p>
+    </section>
+
+
+
+    <!-- Tombol WhatsApp -->
+    <section class="p-4 text-center">
+      <a href="https://wa.me/6281399332296?text=Berikut%20kami%20kirimkan%20bukti%20bayar%20untuk%20proses%20verifikasi" target="_blank" class="inline-block bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-green-600 transition duration-200">
+        Kirim Bukti Bayar
+      </a>
+    </section>
+            <h2 class="font-semibold text-center">Kirim Melalui WhatsApp</h2>
+    </section>
+
+  </div>
+</body>
+</html>
