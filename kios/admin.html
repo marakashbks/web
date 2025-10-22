@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonKios - Panel Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f7ff;
+            --secondary: #ff00e6;
+            --accent: #00ff88;
+            --warning: #ffaa00;
+            --dark: #0a0a1a;
+            --darker: #050510;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-glow: 0 0 10px, 0 0 20px, 0 0 40px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animasi Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--primary);
+            opacity: 0.3;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(0) translateX(20px); }
+            75% { transform: translateY(20px) translateX(10px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+
+        /* Header & Navigasi */
+        header {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: var(--neon-glow) var(--primary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--glass);
+            box-shadow: 0 0 10px var(--primary);
+            color: var(--primary);
+        }
+
+        /* Tombol Menu Hamburger */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: var(--glass);
+            box-shadow: 0 0 10px var(--primary);
+            color: var(--primary);
+        }
+
+        /* Menu Slide */
+        .slide-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: var(--dark);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid var(--glass-border);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .slide-menu.active {
+            right: 0;
+        }
+
+        .slide-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .slide-menu-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .close-menu {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .close-menu:hover {
+            background: var(--glass);
+            box-shadow: 0 0 10px var(--primary);
+            color: var(--primary);
+        }
+
+        .slide-menu ul {
+            list-style: none;
+        }
+
+        .slide-menu li {
+            margin-bottom: 1rem;
+        }
+
+        .slide-menu a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.8rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            width: 100%;
+        }
+
+        .slide-menu a:hover {
+            background: var(--glass);
+            box-shadow: 0 0 10px var(--primary);
+            color: var(--primary);
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Kontainer Utama */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Kartu Kaca */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 
+                        0 0 15px var(--primary);
+        }
+
+        /* Tombol */
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--dark);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: #00e1e8;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 0 10px var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: #e600cf;
+            box-shadow: 0 0 15px var(--secondary);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+            box-shadow: 0 0 10px var(--warning);
+        }
+
+        .btn-warning:hover {
+            background: #e69900;
+            box-shadow: 0 0 15px var(--warning);
+        }
+
+        /* Dashboard Admin */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .stat-available .stat-value {
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent);
+        }
+
+        .stat-occupied .stat-value {
+            color: var(--secondary);
+            text-shadow: 0 0 10px var(--secondary);
+        }
+
+        .stat-pending .stat-value {
+            color: var(--warning);
+            text-shadow: 0 0 10px var(--warning);
+        }
+
+        /* Tabel */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        th {
+            background: var(--glass);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 600px;
+            background: var(--dark);
+            border-radius: 15px;
+            padding: 2rem;
+            position: relative;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 30px var(--primary);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        /* Animasi Neon */
+        .neon-text {
+            color: var(--primary);
+            text-shadow: var(--neon-glow) var(--primary);
+            animation: neon-pulse 2s infinite alternate;
+        }
+
+        @keyframes neon-pulse {
+            from {
+                text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary);
+            }
+            to {
+                text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary), 0 0 30px var(--primary);
+            }
+        }
+
+        /* Notifikasi */
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Responsif */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animasi Background -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Header & Navigasi -->
+    <header>
+        <div class="logo">NeonKios - Admin</div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            </ul>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Menu Slide -->
+    <div class="slide-menu" id="slideMenu">
+        <div class="slide-menu-header">
+            <div class="slide-menu-title">Menu</div>
+            <button class="close-menu" id="closeMenu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul>
+            <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="#" class="active"><i class="fas fa-cog"></i> Admin</a></li>
+            <li><a href="#"><i class="fas fa-chart-bar"></i> Laporan</a></li>
+            <li><a href="#"><i class="fas fa-sliders-h"></i> Pengaturan</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Penyewa</a></li>
+            <li><a href="#"><i class="fas fa-file-invoice"></i> Tagihan</a></li>
+            <li><a href="#"><i class="fas fa-history"></i> Riwayat</a></li>
+            <li><a href="#"><i class="fas fa-question-circle"></i> Bantuan</a></li>
+        </ul>
+    </div>
+
+    <!-- Overlay untuk menu slide -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- Kontainer Utama -->
+    <div class="container">
+        <!-- Dashboard Admin -->
+        <div id="adminDashboard">
+            <div class="admin-header">
+                <h1 class="neon-text">Panel Admin</h1>
+                <div>
+                    <button class="btn btn-primary" id="addKiosBtn">
+                        <i class="fas fa-plus"></i> Tambah Kios
+                    </button>
+                    <button class="btn btn-secondary" id="sendRemindersBtn">
+                        <i class="fas fa-bell"></i> Kirim Pengingat
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="glass-card stat-card stat-available">
+                    <h3>Kios Tersedia</h3>
+                    <div class="stat-value" id="availableCount">0</div>
+                    <p>Dari total 48 kios</p>
+                </div>
+                <div class="glass-card stat-card stat-occupied">
+                    <h3>Kios Disewa</h3>
+                    <div class="stat-value" id="occupiedCount">0</div>
+                    <p>Sedang aktif disewa</p>
+                </div>
+                <div class="glass-card stat-card stat-pending">
+                    <h3>Tagihan Tertunda</h3>
+                    <div class="stat-value" id="pendingBills">0</div>
+                    <p>Perlu tindakan segera</p>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <h2>Daftar Kios</h2>
+                <div class="table-container">
+                    <table id="kiosTable">
+                        <thead>
+                            <tr>
+                                <th>No. Kios</th>
+                                <th>Penyewa</th>
+                                <th>Kontak</th>
+                                <th>Lama Sewa</th>
+                                <th>Listrik</th>
+                                <th>Air</th>
+                                <th>Sampah</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kiosTableBody">
+                            <!-- Data kios akan diisi oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah/Edit Kios -->
+    <div class="modal" id="kiosModal">
+        <div class="modal-content glass-card">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2 id="modalTitle">Tambah Kios Baru</h2>
+            <form id="kiosForm">
+                <div class="form-group">
+                    <label for="kiosNumber">Nomor Kios</label>
+                    <input type="text" id="kiosNumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="tenantName">Nama Penyewa</label>
+                    <input type="text" id="tenantName">
+                </div>
+                <div class="form-group">
+                    <label for="tenantContact">Kontak Penyewa</label>
+                    <input type="text" id="tenantContact">
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Tanggal Mulai</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="form-group">
+                    <label for="endDate">Tanggal Berakhir</label>
+                    <input type="date" id="endDate">
+                </div>
+                <div class="form-group">
+                    <label for="electricityBill">Tagihan Listrik (Rp)</label>
+                    <input type="number" id="electricityBill">
+                </div>
+                <div class="form-group">
+                    <label for="waterBill">Tagihan Air (Rp)</label>
+                    <input type="number" id="waterBill">
+                </div>
+                <div class="form-group">
+                    <label for="wasteBill">Tagihan Sampah (Rp)</label>
+                    <input type="number" id="wasteBill">
+                </div>
+                <div class="form-group">
+                    <label for="paymentStatus">Status Pembayaran</label>
+                    <select id="paymentStatus">
+                        <option value="paid">Lunas</option>
+                        <option value="pending">Belum Lunas</option>
+                        <option value="overdue">Terlambat</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notifikasi -->
+    <div class="notification" id="notification">
+        <div id="notificationMessage">Operasi berhasil disimpan!</div>
+    </div>
+
+    <script>
+        // Data kios (sama dengan di halaman utama)
+        let kiosData = [
+            { id: 1, number: "A-01", tenant: "Budi Santoso", contact: "081234567890", startDate: "2023-01-15", endDate: "2023-07-14", electricity: 450000, water: 120000, waste: 80000, status: "occupied", paymentStatus: "paid" },
+            { id: 2, number: "A-02", tenant: "", contact: "", startDate: "", endDate: "", electricity: 0, water: 0, waste: 0, status: "available", paymentStatus: "" },
+            { id: 3, number: "A-03", tenant: "Sari Indah", contact: "081398765432", startDate: "2023-03-10", endDate: "2023-09-09", electricity: 380000, water: 95000, waste: 80000, status: "occupied", paymentStatus: "pending" },
+            { id: 4, number: "A-04", tenant: "", contact: "", startDate: "", endDate: "", electricity: 0, water: 0, waste: 0, status: "available", paymentStatus: "" },
+            { id: 5, number: "A-05", tenant: "Rudi Hermawan", contact: "085712345678", startDate: "2023-05-20", endDate: "2023-06-19", electricity: 520000, water: 110000, waste: 80000, status: "occupied", paymentStatus: "overdue" },
+        ];
+
+        // Generate data kios tambahan
+        function generateKiosData() {
+            for (let i = 6; i <= 48; i++) {
+                const block = String.fromCharCode(65 + Math.floor((i-1)/12));
+                const number = (i % 12 === 0) ? 12 : i % 12;
+                const kiosNumber = `${block}-${number.toString().padStart(2, '0')}`;
+                
+                const status = Math.random() > 0.3 ? "occupied" : "available";
+                
+                let tenant = "";
+                let contact = "";
+                let startDate = "";
+                let endDate = "";
+                let electricity = 0;
+                let water = 0;
+                let waste = 0;
+                let paymentStatus = "";
+                
+                if (status === "occupied") {
+                    const names = ["Ahmad Fauzi", "Dewi Lestari", "Hendra Pratama", "Maya Sari", "Fajar Nugroho", "Indah Permata", "Rizki Ramadhan", "Siti Rahayu", "Joko Widodo", "Lia Amelia"];
+                    const phones = ["0812", "0813", "0856", "0857", "0858", "0877", "0878", "0895", "0896", "0899"];
+                    const paymentStatuses = ["paid", "pending", "overdue"];
+                    
+                    tenant = names[Math.floor(Math.random() * names.length)];
+                    contact = phones[Math.floor(Math.random() * phones.length)] + Math.floor(1000000 + Math.random() * 9000000);
+                    
+                    const start = new Date();
+                    start.setMonth(start.getMonth() - Math.floor(Math.random() * 12));
+                    startDate = start.toISOString().split('T')[0];
+                    
+                    const end = new Date(start);
+                    end.setMonth(end.getMonth() + Math.floor(Math.random() * 6) + 1);
+                    endDate = end.toISOString().split('T')[0];
+                    
+                    electricity = Math.floor(300000 + Math.random() * 300000);
+                    water = Math.floor(80000 + Math.random() * 50000);
+                    waste = 80000;
+                    paymentStatus = paymentStatuses[Math.floor(Math.random() * paymentStatuses.length)];
+                }
+                
+                kiosData.push({
+                    id: i,
+                    number: kiosNumber,
+                    tenant: tenant,
+                    contact: contact,
+                    startDate: startDate,
+                    endDate: endDate,
+                    electricity: electricity,
+                    water: water,
+                    waste: waste,
+                    status: status,
+                    paymentStatus: paymentStatus
+                });
+            }
+        }
+
+        // Inisialisasi
+        document.addEventListener('DOMContentLoaded', function() {
+            generateKiosData();
+            createBackgroundAnimation();
+            renderKiosTable();
+            updateStats();
+            
+            // Setup menu slide
+            const menuToggle = document.getElementById('menuToggle');
+            const slideMenu = document.getElementById('slideMenu');
+            const closeMenu = document.getElementById('closeMenu');
+            const menuOverlay = document.getElementById('menuOverlay');
+            
+            menuToggle.addEventListener('click', function() {
+                slideMenu.classList.add('active');
+                menuOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            closeMenu.addEventListener('click', function() {
+                slideMenu.classList.remove('active');
+                menuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            menuOverlay.addEventListener('click', function() {
+                slideMenu.classList.remove('active');
+                menuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            // Event listeners untuk modal
+            document.getElementById('addKiosBtn').addEventListener('click', function() {
+                openKiosModal();
+            });
+            
+            document.getElementById('sendRemindersBtn').addEventListener('click', function() {
+                sendReminders();
+            });
+            
+            document.getElementById('closeModal').addEventListener('click', closeKiosModal);
+            document.getElementById('cancelBtn').addEventListener('click', closeKiosModal);
+            
+            document.getElementById('kiosForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveKiosData();
+            });
+            
+            // Tutup modal ketika klik di luar konten modal
+            window.addEventListener('click', function(e) {
+                const modal = document.getElementById('kiosModal');
+                if (e.target === modal) {
+                    closeKiosModal();
+                }
+            });
+        });
+
+        // Animasi background dengan partikel
+        function createBackgroundAnimation() {
+            const bgAnimation = document.getElementById('bgAnimation');
+            const colors = ['var(--primary)', 'var(--secondary)', 'var(--accent)'];
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 30 + 10;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.background = color;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                
+                bgAnimation.appendChild(particle);
+            }
+        }
+
+        // Hubungi penyewa untuk sewa habis
+        function contactTenant(contact, tenantName, kiosNumber, type = 'expired') {
+            let message = '';
+            
+            if (type === 'expiring') {
+                message = `Hai Bpk/Ibu ${tenantName}, ini adalah pesan otomatis dari NeonKios. Kami ingin mengingatkan bahwa sewa kios ${kiosNumber} Anda akan segera habis. Mohon untuk segera melakukan perpanjangan. Terima kasih.`;
+            } else if (type === 'expired') {
+                message = `Hai Bpk/Ibu ${tenantName}, ini adalah pesan otomatis dari NeonKios. Kami ingin memberitahukan bahwa sewa kios ${kiosNumber} Anda telah habis. Mohon untuk segera melakukan perpanjangan atau mengosongkan kios. Terima kasih.`;
+            } else {
+                message = `Hai Bpk/Ibu ${tenantName}, ini adalah pesan otomatis dari NeonKios.`;
+            }
+            
+            // Encode pesan untuk URL
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${contact.replace(/\D/g, '')}?text=${encodedMessage}`;
+            
+            // Buka WhatsApp di tab baru
+            window.open(whatsappURL, '_blank');
+        }
+
+        // Ingatkan penyewa untuk tagihan
+        function remindTenant(contact, tenantName, kiosNumber, totalBill, paymentStatus) {
+            let statusText = paymentStatus === 'overdue' ? 'TERLAMBAT' : 'BELUM LUNAS';
+            let urgency = paymentStatus === 'overdue' ? 'segera' : 'segera';
+            
+            const message = `Hai Bpk/Ibu ${tenantName}, ini adalah pesan otomatis dari NeonKios. Kami ingin mengingatkan bahwa tagihan kios ${kiosNumber} Anda status ${statusText} dengan total Rp ${formatNumber(totalBill)}. Mohon untuk melakukan pembayaran ${urgency}. Terima kasih.`;
+            
+            // Encode pesan untuk URL
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${contact.replace(/\D/g, '')}?text=${encodedMessage}`;
+            
+            // Buka WhatsApp di tab baru
+            window.open(whatsappURL, '_blank');
+        }
+
+        // Render tabel kios di panel admin
+        function renderKiosTable() {
+            const tableBody = document.getElementById('kiosTableBody');
+            tableBody.innerHTML = '';
+            
+            kiosData.forEach(kios => {
+                const row = document.createElement('tr');
+                
+                // Tentukan status untuk tampilan
+                let statusBadge = '';
+                if (kios.status === 'occupied') {
+                    const today = new Date();
+                    const endDate = new Date(kios.endDate);
+                    const daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysLeft <= 30 && daysLeft > 0) {
+                        statusBadge = `<span class="kios-status" style="background: rgba(255, 170, 0, 0.2); color: var(--warning); box-shadow: 0 0 10px var(--warning); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">${daysLeft} hari</span>`;
+                    } else if (daysLeft <= 0) {
+                        statusBadge = `<span class="kios-status" style="background: rgba(255, 170, 0, 0.2); color: var(--warning); box-shadow: 0 0 10px var(--warning); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Habis</span>`;
+                    } else {
+                        statusBadge = `<span class="kios-status" style="background: rgba(255, 0, 230, 0.2); color: var(--secondary); box-shadow: 0 0 10px var(--secondary); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Aktif</span>`;
+                    }
+                } else {
+                    statusBadge = `<span class="kios-status" style="background: rgba(0, 255, 136, 0.2); color: var(--accent); box-shadow: 0 0 10px var(--accent); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Tersedia</span>`;
+                }
+                
+                row.innerHTML = `
+                    <td>${kios.number}</td>
+                    <td>${kios.tenant || '-'}</td>
+                    <td>${kios.contact || '-'}</td>
+                    <td>${kios.startDate ? `${formatDate(kios.startDate)} - ${formatDate(kios.endDate)}` : '-'}</td>
+                    <td>Rp ${formatNumber(kios.electricity)}</td>
+                    <td>Rp ${formatNumber(kios.water)}</td>
+                    <td>Rp ${formatNumber(kios.waste)}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editKios(${kios.id})">Edit</button>
+                        <button class="btn btn-secondary" onclick="deleteKios(${kios.id})">Hapus</button>
+                        ${kios.contact ? `<button class="btn btn-warning" onclick="contactTenant('${kios.contact}', '${kios.tenant}', '${kios.number}')">WhatsApp</button>` : ''}
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Update statistik di panel admin
+        function updateStats() {
+            const availableCount = kiosData.filter(kios => kios.status === 'available').length;
+            const occupiedCount = kiosData.filter(kios => kios.status === 'occupied').length;
+            const pendingBills = kiosData.filter(kios => kios.paymentStatus === 'pending' || kios.paymentStatus === 'overdue').length;
+            
+            document.getElementById('availableCount').textContent = availableCount;
+            document.getElementById('occupiedCount').textContent = occupiedCount;
+            document.getElementById('pendingBills').textContent = pendingBills;
+        }
+
+        // Buka modal untuk menambah/mengedit kios
+        function openKiosModal(kiosId = null) {
+            const modal = document.getElementById('kiosModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('kiosForm');
+            
+            if (kiosId) {
+                // Edit mode
+                modalTitle.textContent = 'Edit Data Kios';
+                const kios = kiosData.find(k => k.id === kiosId);
+                
+                document.getElementById('kiosNumber').value = kios.number;
+                document.getElementById('tenantName').value = kios.tenant;
+                document.getElementById('tenantContact').value = kios.contact;
+                document.getElementById('startDate').value = kios.startDate;
+                document.getElementById('endDate').value = kios.endDate;
+                document.getElementById('electricityBill').value = kios.electricity;
+                document.getElementById('waterBill').value = kios.water;
+                document.getElementById('wasteBill').value = kios.waste;
+                document.getElementById('paymentStatus').value = kios.paymentStatus;
+                
+                form.dataset.editId = kiosId;
+            } else {
+                // Add mode
+                modalTitle.textContent = 'Tambah Kios Baru';
+                form.reset();
+                delete form.dataset.editId;
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        // Tutup modal kios
+        function closeKiosModal() {
+            document.getElementById('kiosModal').style.display = 'none';
+        }
+
+        // Simpan data kios (tambah atau edit)
+        function saveKiosData() {
+            const form = document.getElementById('kiosForm');
+            const isEdit = form.dataset.editId;
+            
+            const kiosDataObj = {
+                number: document.getElementById('kiosNumber').value,
+                tenant: document.getElementById('tenantName').value,
+                contact: document.getElementById('tenantContact').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                electricity: parseInt(document.getElementById('electricityBill').value) || 0,
+                water: parseInt(document.getElementById('waterBill').value) || 0,
+                waste: parseInt(document.getElementById('wasteBill').value) || 0,
+                paymentStatus: document.getElementById('paymentStatus').value,
+                status: document.getElementById('tenantName').value ? 'occupied' : 'available'
+            };
+            
+            if (isEdit) {
+                // Update existing kios
+                const index = kiosData.findIndex(k => k.id === parseInt(isEdit));
+                kiosData[index] = { ...kiosData[index], ...kiosDataObj };
+                showNotification('Data kios berhasil diperbarui!');
+            } else {
+                // Add new kios
+                const newId = kiosData.length > 0 ? Math.max(...kiosData.map(k => k.id)) + 1 : 1;
+                kiosData.push({ id: newId, ...kiosDataObj });
+                showNotification('Kios baru berhasil ditambahkan!');
+            }
+            
+            renderKiosTable();
+            updateStats();
+            closeKiosModal();
+        }
+
+        // Edit kios
+        function editKios(kiosId) {
+            openKiosModal(kiosId);
+        }
+
+        // Hapus kios
+        function deleteKios(kiosId) {
+            if (confirm('Apakah Anda yakin ingin menghapus data kios ini?')) {
+                kiosData = kiosData.filter(k => k.id !== kiosId);
+                renderKiosTable();
+                updateStats();
+                showNotification('Data kios berhasil dihapus!');
+            }
+        }
+
+        // Kirim pengingat ke semua penyewa
+        function sendReminders() {
+            let count = 0;
+            const today = new Date();
+            
+            kiosData.forEach(kios => {
+                if (kios.status === 'occupied' && (kios.paymentStatus === 'pending' || kios.paymentStatus === 'overdue')) {
+                    count++;
+                    const totalBill = kios.electricity + kios.water + kios.waste;
+                    
+                    // Tunggu sebentar antara setiap pengiriman untuk menghindari spam
+                    setTimeout(() => {
+                        remindTenant(kios.contact, kios.tenant, kios.number, totalBill, kios.paymentStatus);
+                    }, count * 1000);
+                }
+                
+                // Juga kirim pengingat untuk sewa yang hampir habis
+                if (kios.status === 'occupied') {
+                    const endDate = new Date(kios.endDate);
+                    const daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysLeft <= 30 && daysLeft > 0) {
+                        count++;
+                        setTimeout(() => {
+                            contactTenant(kios.contact, kios.tenant, kios.number, 'expiring');
+                        }, count * 1000);
+                    } else if (daysLeft <= 0) {
+                        count++;
+                        setTimeout(() => {
+                            contactTenant(kios.contact, kios.tenant, kios.number, 'expired');
+                        }, count * 1000);
+                    }
+                }
+            });
+            
+            showNotification(`Pengingat sedang dikirim ke ${count} penyewa!`);
+        }
+
+        // Tampilkan notifikasi
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            messageEl.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Format tanggal
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        }
+
+        // Format angka dengan pemisah ribuan
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+    </script>
+</body>
+</html>
