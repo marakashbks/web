@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonKios - Sistem Penyewaan Kios Futuristik</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #00f3ff;
+            --secondary-color: #ff00e6;
+            --accent-color: #9d00ff;
+            --food-color: #ff6b6b;
+            --snack-color: #ffd93d;
+            --drink-color: #6bcf7f;
+            --dark-bg: rgba(10, 10, 30, 0.8);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(0,243,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            animation: neonPulse 3s infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            0% {
+                text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(0, 243, 255, 0.8), 0 0 30px rgba(0, 243, 255, 0.6);
+            }
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stat-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card.total h3 { color: var(--primary-color); }
+        .stat-card.food h3 { color: var(--food-color); }
+        .stat-card.snack h3 { color: var(--snack-color); }
+        .stat-card.drink h3 { color: var(--drink-color); }
+
+        .kios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .kios-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .kios-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .kios-item.food::before { background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.05)); }
+        .kios-item.snack::before { background: linear-gradient(135deg, rgba(255, 217, 61, 0.1), rgba(255, 217, 61, 0.05)); }
+        .kios-item.drink::before { background: linear-gradient(135deg, rgba(107, 207, 127, 0.1), rgba(107, 207, 127, 0.05)); }
+
+        .kios-item.occupied {
+            border: 2px solid;
+            box-shadow: 0 0 15px;
+        }
+
+        .kios-item.vacant {
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+        }
+
+        .kios-item.food.occupied { border-color: var(--food-color); box-shadow: 0 0 15px rgba(255, 107, 107, 0.5); }
+        .kios-item.snack.occupied { border-color: var(--snack-color); box-shadow: 0 0 15px rgba(255, 217, 61, 0.5); }
+        .kios-item.drink.occupied { border-color: var(--drink-color); box-shadow: 0 0 15px rgba(107, 207, 127, 0.5); }
+
+        .kios-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .kios-name {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .kios-item.food .kios-name { color: var(--food-color); }
+        .kios-item.snack .kios-name { color: var(--snack-color); }
+        .kios-item.drink .kios-name { color: var(--drink-color); }
+
+        .kios-business {
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+
+        .kios-status {
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .occupied .kios-status {
+            background: rgba(255, 0, 230, 0.2);
+            color: var(--secondary-color);
+        }
+
+        .vacant .kios-status {
+            background: rgba(0, 243, 255, 0.2);
+            color: var(--primary-color);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        th {
+            color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--dark-bg);
+        }
+
+        .btn-primary:hover {
+            background: #00d9e6;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #e600cf;
+            box-shadow: 0 0 10px rgba(255, 0, 230, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 5px;
+            color: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .close {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--secondary-color);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1100;
+            transform: translateX(150%);
+            transition: transform 0.5s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            opacity: 0.1;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            50% {
+                transform: translate(100px, 100px) rotate(180deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        .business-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .kios-item.food .business-icon { color: var(--food-color); }
+        .kios-item.snack .business-icon { color: var(--snack-color); }
+        .kios-item.drink .business-icon { color: var(--drink-color); }
+
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-controls select {
+            width: auto;
+            min-width: 150px;
+        }
+
+        .business-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .badge-food { background: rgba(255, 107, 107, 0.2); color: var(--food-color); }
+        .badge-snack { background: rgba(255, 217, 61, 0.2); color: var(--snack-color); }
+        .badge-drink { background: rgba(107, 207, 127, 0.2); color: var(--drink-color); }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .kios-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+
+            .filter-controls {
+                flex-direction: column;
+            }
+
+            .filter-controls select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="top: 20%; left: 80%; animation-delay: 2s;"></div>
+        <div class="floating-element" style="top: 60%; left: 10%; animation-delay: 4s;"></div>
+        <div class="floating-element" style="top: 70%; left: 70%; animation-delay: 6s;"></div>
+        <div class="floating-element" style="top: 40%; left: 50%; animation-delay: 8s;"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-store fa-2x" style="color: var(--primary-color);"></i>
+                <h1>NeonKios</h1>
+            </div>
+            <div class="user-info glass-card">
+                <i class="fas fa-user-circle"></i> Admin Panel
+            </div>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card total glass-card">
+                <h3>Total Kios</h3>
+                <div class="value">48</div>
+                <div class="label">Unit</div>
+            </div>
+            <div class="stat-card food glass-card">
+                <h3>Kios Makanan</h3>
+                <div class="value">18</div>
+                <div class="label">Unit</div>
+            </div>
+            <div class="stat-card snack glass-card">
+                <h3>Kios Camilan</h3>
+                <div class="value">15</div>
+                <div class="label">Unit</div>
+            </div>
+            <div class="stat-card drink glass-card">
+                <h3>Kios Minuman</h3>
+                <div class="value">15</div>
+                <div class="label">Unit</div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="glass-card">
+                <h2><i class="fas fa-chart-line"></i> Ringkasan Penyewaan</h2>
+                <div class="summary">
+                    <p>Pendapatan Bulan Ini: <strong>Rp 48.000.000</strong></p>
+                    <p>Tagihan Listrik Tertunggak: <strong>Rp 2.350.000</strong></p>
+                    <p>Tagihan Air Tertunggak: <strong>Rp 1.120.000</strong></p>
+                </div>
+            </div>
+            <div class="glass-card">
+                <h2><i class="fas fa-bell"></i> Pengingat</h2>
+                <ul class="reminders">
+                    <li>3 sewa akan berakhir dalam 7 hari</li>
+                    <li>5 tagihan listrik belum dibayar</li>
+                    <li>2 tagihan air belum dibayar</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="kios">Daftar Kios</div>
+            <div class="tab" data-tab="penyewa">Data Penyewa</div>
+            <div class="tab" data-tab="tagihan">Tagihan</div>
+            <div class="tab" data-tab="tambah">Tambah Penyewa</div>
+        </div>
+
+        <div class="tab-content active" id="kios">
+            <div class="filter-controls">
+                <select id="filter-status">
+                    <option value="all">Semua Status</option>
+                    <option value="occupied">Tersewa</option>
+                    <option value="vacant">Kosong</option>
+                </select>
+                <select id="filter-business">
+                    <option value="all">Semua Jenis Usaha</option>
+                    <option value="food">Makanan</option>
+                    <option value="snack">Camilan</option>
+                    <option value="drink">Minuman</option>
+                </select>
+            </div>
+            <div class="kios-grid">
+                <!-- Kios items will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="tab-content" id="penyewa">
+            <div class="glass-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No. Kios</th>
+                            <th>Nama Kios</th>
+                            <th>Jenis Usaha</th>
+                            <th>Nama Penyewa</th>
+                            <th>Telepon</th>
+                            <th>Mulai Sewa</th>
+                            <th>Akhir Sewa</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>A-01</td>
+                            <td>Warung Nusantara</td>
+                            <td><span class="business-badge badge-food">Makanan</span></td>
+                            <td>Budi Santoso</td>
+                            <td>08123456789</td>
+                            <td>01/03/2023</td>
+                            <td>01/03/2024</td>
+                            <td>
+                                <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-secondary"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>A-02</td>
+                            <td>Kedai Camilan 89</td>
+                            <td><span class="business-badge badge-snack">Camilan</span></td>
+                            <td>Sari Indah</td>
+                            <td>08198765432</td>
+                            <td>15/02/2023</td>
+                            <td>15/02/2024</td>
+                            <td>
+                                <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-secondary"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>A-03</td>
+                            <td>Kopi Teman</td>
+                            <td><span class="business-badge badge-drink">Minuman</span></td>
+                            <td>Ahmad Fauzi</td>
+                            <td>08111222333</td>
+                            <td>10/01/2023</td>
+                            <td>10/01/2024</td>
+                            <td>
+                                <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-secondary"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tagihan">
+            <div class="glass-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No. Kios</th>
+                            <th>Nama Kios</th>
+                            <th>Jenis Usaha</th>
+                            <th>Listrik</th>
+                            <th>Air</th>
+                            <th>Iuran Sampah</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>A-01</td>
+                            <td>Warung Nusantara</td>
+                            <td><span class="business-badge badge-food">Makanan</span></td>
+                            <td>Rp 350.000</td>
+                            <td>Rp 120.000</td>
+                            <td>Rp 50.000</td>
+                            <td>Rp 520.000</td>
+                            <td><span class="status overdue">Belum Bayar</span></td>
+                            <td>
+                                <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-secondary"><i class="fas fa-check"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>A-02</td>
+                            <td>Kedai Camilan 89</td>
+                            <td><span class="business-badge badge-snack">Camilan</span></td>
+                            <td>Rp 280.000</td>
+                            <td>Rp 95.000</td>
+                            <td>Rp 50.000</td>
+                            <td>Rp 425.000</td>
+                            <td><span class="status paid">Lunas</span></td>
+                            <td>
+                                <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-secondary"><i class="fas fa-check"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>A-03</td>
+                            <td>Kopi Teman</td>
+                            <td><span class="business-badge badge-drink">Minuman</span></td>
+                            <td>Rp 320.000</td>
+                            <td>Rp 110.000</td>
+                            <td>Rp 50.000</td>
+                            <td>Rp 480.000</td>
+                            <td><span class="status paid">Lunas</span></td>
+                            <td>
+                                <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-secondary"><i class="fas fa-check"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tambah">
+            <div class="glass-card">
+                <h2>Tambah Penyewa Baru</h2>
+                <form id="penyewa-form">
+                    <div class="form-group">
+                        <label for="kios">Pilih Kios</label>
+                        <select id="kios" required>
+                            <option value="">-- Pilih Kios --</option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nama-kios">Nama Kios</label>
+                        <input type="text" id="nama-kios" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="jenis-usaha">Jenis Usaha</label>
+                        <select id="jenis-usaha" required>
+                            <option value="">-- Pilih Jenis Usaha --</option>
+                            <option value="food">Makanan</option>
+                            <option value="snack">Camilan</option>
+                            <option value="drink">Minuman</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nama">Nama Penyewa</label>
+                        <input type="text" id="nama" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telepon">Telepon</label>
+                        <input type="text" id="telepon" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="ktp">No. KTP</label>
+                        <input type="text" id="ktp" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mulai-sewa">Tanggal Mulai Sewa</label>
+                        <input type="date" id="mulai-sewa" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lama-sewa">Lama Sewa (bulan)</label>
+                        <input type="number" id="lama-sewa" min="1" value="12" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="harga-sewa">Harga Sewa per Bulan</label>
+                        <input type="number" id="harga-sewa" value="1500000" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Simpan Data Penyewa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="kios-modal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2>Detail Kios <span id="modal-kios-number"></span></h2>
+                <span class="close">&times;</span>
+            </div>
+            <div id="modal-content">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <i class="fas fa-bell"></i>
+        <span id="notification-text">Pesan notifikasi</span>
+    </div>
+
+    <script>
+        // Data kios dengan nama dan jenis usaha
+        const kiosData = [
+            { number: 'A-01', name: 'Warung Nusantara', business: 'food', businessName: 'Makanan', icon: 'fas fa-utensils', occupied: true },
+            { number: 'A-02', name: 'Kedai Camilan 89', business: 'snack', businessName: 'Camilan', icon: 'fas fa-cookie', occupied: true },
+            { number: 'A-03', name: 'Kopi Teman', business: 'drink', businessName: 'Minuman', icon: 'fas fa-coffee', occupied: true },
+            { number: 'A-04', name: 'Bakmi Jowo', business: 'food', businessName: 'Makanan', icon: 'fas fa-utensils', occupied: true },
+            { number: 'A-05', name: 'Snack Corner', business: 'snack', businessName: 'Camilan', icon: 'fas fa-cookie-bite', occupied: true },
+            { number: 'A-06', name: 'Teh Poci', business: 'drink', businessName: 'Minuman', icon: 'fas fa-mug-hot', occupied: true },
+            { number: 'A-07', name: 'Sate Madura', business: 'food', businessName: 'Makanan', icon: 'fas fa-drumstick-bite', occupied: true },
+            { number: 'A-08', name: 'Martabak Manis', business: 'snack', businessName: 'Camilan', icon: 'fas fa-pancakes', occupied: true },
+            { number: 'A-09', name: 'Jus Segar', business: 'drink', businessName: 'Minuman', icon: 'fas fa-glass-whiskey', occupied: true },
+            { number: 'A-10', name: 'Nasi Goreng', business: 'food', businessName: 'Makanan', icon: 'fas fa-utensils', occupied: true },
+            // Add more kios data as needed
+        ];
+
+        // Generate remaining kios data
+        for (let i = 11; i <= 48; i++) {
+            const kiosNumber = i < 10 ? `A-0${i}` : `A-${i}`;
+            const businessTypes = ['food', 'snack', 'drink'];
+            const businessNames = ['Makanan', 'Camilan', 'Minuman'];
+            const icons = ['fas fa-utensils', 'fas fa-cookie', 'fas fa-coffee'];
+            
+            const randomIndex = Math.floor(Math.random() * businessTypes.length);
+            const business = businessTypes[randomIndex];
+            const businessName = businessNames[randomIndex];
+            const icon = icons[randomIndex];
+            
+            const isOccupied = i <= 32; // First 32 kios are occupied
+            
+            let name = '';
+            if (isOccupied) {
+                const foodNames = [
+                    'Warung Sederhana', 'Kedai Makan', 'Rumah Makan', 'Restoran Nusantara',
+                    'Warung Padang', 'Soto Lamongan', 'Bakso Malang', 'Gado-Gado'
+                ];
+                const snackNames = [
+                    'Kedai Camilan', 'Snack Corner', 'Toko Kue', 'Martabak Manis',
+                    'Gorengan Enak', 'Kue Basah', 'Camilan Nikmat', 'Kripiku'
+                ];
+                const drinkNames = [
+                    'Kopi Santai', 'Teh Poci', 'Jus Segar', 'Minuman Dingin',
+                    'Kedai Kopi', 'Es Kelapa', 'Bubble Tea', 'Sari Buah'
+                ];
+                
+                if (business === 'food') {
+                    name = foodNames[Math.floor(Math.random() * foodNames.length)] + ' ' + kiosNumber;
+                } else if (business === 'snack') {
+                    name = snackNames[Math.floor(Math.random() * snackNames.length)] + ' ' + kiosNumber;
+                } else {
+                    name = drinkNames[Math.floor(Math.random() * drinkNames.length)] + ' ' + kiosNumber;
+                }
+            }
+            
+            kiosData.push({
+                number: kiosNumber,
+                name: name,
+                business: business,
+                businessName: businessName,
+                icon: icon,
+                occupied: isOccupied
+            });
+        }
+
+        // Generate kios items
+        const kiosGrid = document.querySelector('.kios-grid');
+        const kiosSelect = document.getElementById('kios');
+        const filterStatus = document.getElementById('filter-status');
+        const filterBusiness = document.getElementById('filter-business');
+        
+        function renderKiosGrid(filterStatusValue = 'all', filterBusinessValue = 'all') {
+            kiosGrid.innerHTML = '';
+            
+            kiosData.forEach(kios => {
+                if (filterStatusValue !== 'all' && 
+                    ((filterStatusValue === 'occupied' && !kios.occupied) || 
+                     (filterStatusValue === 'vacant' && kios.occupied))) {
+                    return;
+                }
+                
+                if (filterBusinessValue !== 'all' && kios.business !== filterBusinessValue) {
+                    return;
+                }
+                
+                const kiosItem = document.createElement('div');
+                kiosItem.className = `kios-item glass-card ${kios.business} ${kios.occupied ? 'occupied' : 'vacant'}`;
+                kiosItem.dataset.kios = kios.number;
+                kiosItem.dataset.business = kios.business;
+                
+                kiosItem.innerHTML = `
+                    <div class="business-icon"><i class="${kios.icon}"></i></div>
+                    <div class="kios-number">${kios.number}</div>
+                    ${kios.occupied ? `<div class="kios-name">${kios.name}</div>` : ''}
+                    ${kios.occupied ? `<div class="kios-business">${kios.businessName}</div>` : ''}
+                    <div class="kios-status">${kios.occupied ? 'Tersewa' : 'Kosong'}</div>
+                `;
+                
+                kiosGrid.appendChild(kiosItem);
+                
+                // Add click event to kios items
+                kiosItem.addEventListener('click', () => {
+                    openKiosModal(kios);
+                });
+            });
+        }
+        
+        // Initial render
+        renderKiosGrid();
+        
+        // Add filter event listeners
+        filterStatus.addEventListener('change', () => {
+            renderKiosGrid(filterStatus.value, filterBusiness.value);
+        });
+        
+        filterBusiness.addEventListener('change', () => {
+            renderKiosGrid(filterStatus.value, filterBusiness.value);
+        });
+        
+        // Populate kios select for adding new tenant
+        kiosData.forEach(kios => {
+            if (!kios.occupied) {
+                const option = document.createElement('option');
+                option.value = kios.number;
+                option.textContent = kios.number;
+                kiosSelect.appendChild(option);
+            }
+        });
+        
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+                
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to current tab and content
+                tab.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Modal functionality
+        const modal = document.getElementById('kios-modal');
+        const closeBtn = document.querySelector('.close');
+        
+        function openKiosModal(kios) {
+            document.getElementById('modal-kios-number').textContent = kios.number;
+            
+            let content = '';
+            if (kios.occupied) {
+                content = `
+                    <h3>Informasi Kios</h3>
+                    <p><strong>Nama Kios:</strong> ${kios.name}</p>
+                    <p><strong>Jenis Usaha:</strong> <span class="business-badge badge-${kios.business}">${kios.businessName}</span></p>
+                    
+                    <h3>Informasi Penyewa</h3>
+                    <p><strong>Nama:</strong> ${getRandomName()}</p>
+                    <p><strong>Telepon:</strong> ${getRandomPhone()}</p>
+                    <p><strong>Mulai Sewa:</strong> ${getRandomDate()}</p>
+                    <p><strong>Akhir Sewa:</strong> ${getRandomFutureDate()}</p>
+                    
+                    <h3>Tagihan Terbaru</h3>
+                    <p><strong>Listrik:</strong> Rp ${getRandomAmount(200000, 500000)}</p>
+                    <p><strong>Air:</strong> Rp ${getRandomAmount(80000, 150000)}</p>
+                    <p><strong>Iuran Sampah:</strong> Rp 50.000</p>
+                    <p><strong>Total:</strong> Rp ${getRandomAmount(350000, 650000)}</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary"><i class="fas fa-edit"></i> Edit Data</button>
+                        <button class="btn btn-secondary"><i class="fas fa-file-invoice"></i> Lihat Tagihan</button>
+                    </div>
+                `;
+            } else {
+                content = `
+                    <p>Kios ${kios.number} saat ini kosong dan tersedia untuk disewa.</p>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="switchToAddTab('${kios.number}')"><i class="fas fa-user-plus"></i> Tambah Penyewa</button>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('modal-content').innerHTML = content;
+            modal.style.display = 'flex';
+        }
+        
+        function switchToAddTab(kiosNumber) {
+            // Switch to Add Tenant tab
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            document.querySelector('[data-tab="tambah"]').classList.add('active');
+            document.getElementById('tambah').classList.add('active');
+            
+            // Set the kios select to the clicked kios
+            document.getElementById('kios').value = kiosNumber;
+            
+            // Close modal
+            modal.style.display = 'none';
+        }
+        
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // Form submission
+        document.getElementById('penyewa-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const kiosNumber = document.getElementById('kios').value;
+            const kiosName = document.getElementById('nama-kios').value;
+            const businessType = document.getElementById('jenis-usaha').value;
+            
+            // Update kios data
+            const kiosIndex = kiosData.findIndex(k => k.number === kiosNumber);
+            if (kiosIndex !== -1) {
+                kiosData[kiosIndex].occupied = true;
+                kiosData[kiosIndex].name = kiosName;
+                kiosData[kiosIndex].business = businessType;
+                
+                // Update business name and icon based on business type
+                const businessTypes = {
+                    'food': { name: 'Makanan', icon: 'fas fa-utensils' },
+                    'snack': { name: 'Camilan', icon: 'fas fa-cookie' },
+                    'drink': { name: 'Minuman', icon: 'fas fa-coffee' }
+                };
+                
+                kiosData[kiosIndex].businessName = businessTypes[businessType].name;
+                kiosData[kiosIndex].icon = businessTypes[businessType].icon;
+                
+                // Re-render grid
+                renderKiosGrid(filterStatus.value, filterBusiness.value);
+                
+                // Remove from select dropdown
+                const optionToRemove = document.querySelector(`#kios option[value="${kiosNumber}"]`);
+                if (optionToRemove) {
+                    optionToRemove.remove();
+                }
+            }
+            
+            showNotification('Data penyewa berhasil disimpan!');
+            document.getElementById('penyewa-form').reset();
+        });
+        
+        // Notification function
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Utility functions for demo data
+        function getRandomName() {
+            const names = ['Budi Santoso', 'Sari Indah', 'Ahmad Fauzi', 'Dewi Lestari', 'Joko Widodo', 'Maya Sari', 'Rudi Hartono', 'Linda Wijaya'];
+            return names[Math.floor(Math.random() * names.length)];
+        }
+        
+        function getRandomPhone() {
+            return '08' + Math.floor(100000000 + Math.random() * 900000000);
+        }
+        
+        function getRandomDate() {
+            const start = new Date(2022, 0, 1);
+            const end = new Date();
+            const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            return date.toLocaleDateString('id-ID');
+        }
+        
+        function getRandomFutureDate() {
+            const start = new Date();
+            const end = new Date(2024, 11, 31);
+            const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            return date.toLocaleDateString('id-ID');
+        }
+        
+        function getRandomAmount(min, max) {
+            const amount = Math.floor(Math.random() * (max - min + 1)) + min;
+            return amount.toLocaleString('id-ID');
+        }
+    </script>
+</body>
+</html>
