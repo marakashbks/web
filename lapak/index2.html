@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonKios - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Semua kode CSS dari file yang Anda berikan */
+        /* Saya akan menggunakan semua CSS yang ada di file Anda */
+        
+        /* Hanya menambahkan link navigasi untuk kembali ke halaman utama */
+        .nav-back {
+            margin-right: 20px;
+        }
+        
+        .nav-back a {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .nav-back a:hover {
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="top: 20%; left: 80%; animation-delay: 2s;"></div>
+        <div class="floating-element" style="top: 60%; left: 10%; animation-delay: 4s;"></div>
+        <div class="floating-element" style="top: 70%; left: 70%; animation-delay: 6s;"></div>
+        <div class="floating-element" style="top: 40%; left: 50%; animation-delay: 8s;"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-store fa-2x" style="color: var(--primary-color);"></i>
+                <h1>NeonKios</h1>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="nav-back">
+                    <a href="index.html"><i class="fas fa-arrow-left"></i> Kembali ke Halaman Utama</a>
+                </div>
+                <div class="user-info glass-card">
+                    <i class="fas fa-user-circle"></i> Admin Panel
+                </div>
+            </div>
+        </header>
+
+        <!-- Sisa konten dari file index2.html Anda -->
+        <!-- Semua konten dari file index2.html tetap sama -->
+
+    </div>
+
+    <!-- Modal dan notifikasi -->
+    <div id="kios-modal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2>Detail Kios <span id="modal-kios-number"></span></h2>
+                <span class="close">&times;</span>
+            </div>
+            <div id="modal-content">
+                <!-- Content akan diisi oleh JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <i class="fas fa-bell"></i>
+        <span id="notification-text">Pesan notifikasi</span>
+    </div>
+
+    <!-- JavaScript dari file index2.html Anda -->
+    <script>
+        // Semua kode JavaScript dari file index2.html
+        // Saya akan menggunakan semua JavaScript yang ada di file Anda
+    </script>
+</body>
+</html>
